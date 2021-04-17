@@ -1,10 +1,12 @@
 from typing import Type, List, Union, Dict, Any, TypeVar, Generic
 
+import pymongo
 from bson import ObjectId
 from pydantic import BaseModel
 from pymongo import MongoClient
 from pymongo.collection import Collection
 
+from workout_sessions.models import WorkoutSessionState
 from workouts.models import Workout, Exercise
 
 client = MongoClient()
@@ -37,6 +39,10 @@ class Dao(Generic[T]):
 
     def list(self) -> List[BaseModel]:
         return list(map(lambda data: self.model(**data), self.collection.find()))
+
+    def find_one(self, *args, **kwargs):
+        data = self.collection.find_one({'state': WorkoutSessionState.START}, sort=[('created_at', pymongo.DESCENDING)])
+        return data if data is None else self.model(**data)
 
     def _normalize_values(self, values: Dict[str, object]) -> Dict[str, object]:
         values = values.copy()
