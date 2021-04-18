@@ -9,7 +9,7 @@ from pymongo.collection import Collection
 from workout_sessions.models import WorkoutSessionState
 from workouts.models import Workout, Exercise
 
-client = MongoClient(host="mongodb://mongodb-servers-vm-0/workout?replicaSet=rs0")
+client = MongoClient(host="mongodb://mongodb-1-servers-vm-0/workout?replicaSet=rs0")
 # test_client = MongoClient(database="test")
 
 db = client.workout
