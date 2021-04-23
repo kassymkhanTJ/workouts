@@ -36,6 +36,8 @@ def access_mongo_password():
     return payload
 
 
+mongodb+srv://admin:guElmwDa8FaACfWk@cluster0.wgcf8.mongodb.net/test
+
 password = access_mongo_password()
 client = MongoClient(
     host=f"mongodb+srv://admin:{password}@cluster0.wgcf8.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
