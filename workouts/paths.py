@@ -1,7 +1,5 @@
 from typing import List
 
-import requests
-
 from decorators.path_decorators import validate_bson_id, raise_not_found
 from main import app
 from workouts.models import Workout, Exercise, WorkoutIn
@@ -10,8 +8,7 @@ from workouts.services import workout_service, exercise_service
 
 @app.get("/workouts", response_model=List[Workout], tags=["workouts"])
 def workouts_list():
-    return requests.get("https://mocki.io/v1/65cfb451-f348-426e-94e2-2b633d08ffe4").json()
-    # return workout_service.list()
+    return workout_service.list()
 
 
 @app.get("/workouts/{_id}", response_model=Workout, tags=["workouts"])

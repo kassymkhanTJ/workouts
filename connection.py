@@ -9,7 +9,36 @@ from pymongo.collection import Collection
 from workout_sessions.models import WorkoutSessionState
 from workouts.models import Workout, Exercise
 
-client = MongoClient(host="mongodb://mongodb-1-servers-vm-0/workout?replicaSet=rs0")
+
+def access_mongo_password():
+    """
+    Access the payload for the given secret version if one exists. The version
+    can be a version number as a string (e.g. "5") or an alias (e.g. "latest").
+    """
+
+    # Import the Secret Manager client library.
+    from google.cloud import secretmanager
+
+    # Create the Secret Manager client.
+    client = secretmanager.SecretManagerServiceClient()
+
+    # Build the resource name of the secret version.
+    name = f"projects/789917027769/secrets/mongo-password/versions/1"
+
+    # Access the secret version.
+    response = client.access_secret_version(request={"name": name})
+
+    # Print the secret payload.
+    #
+    # WARNING: Do not print the secret in a production environment - this
+    # snippet is showing how to access the secret material.
+    payload = response.payload.data.decode("UTF-8")
+    return payload
+
+
+password = access_mongo_password()
+client = MongoClient(
+    host=f"mongodb+srv://admin:{password}@cluster0.wgcf8.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
 # test_client = MongoClient(database="test")
 
 db = client.workout
