@@ -84,12 +84,12 @@ class Dao(Generic[T]):
 
 class WorkoutDao(Dao):
     def list(self, order_by: List[Tuple] = None) -> List[Workout]:
+        # TODO: add order by
         query = self.collection.aggregate([
             {'$lookup': {'from': 'exercises',
                          'localField': 'training_sets.rounds.exercise_id',
                          'foreignField': '_id',
                          'as': '_exercises'}},
-            {'$sort': SON(order_by)}
         ])
         data = list(query)
         self._transform_list(data)
