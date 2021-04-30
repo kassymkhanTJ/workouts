@@ -1,7 +1,7 @@
-from typing import Type, List, Union, Dict, Any, TypeVar, Generic
+from typing import Type, List, Union, Dict, Any, TypeVar, Generic, Tuple
 
 import pymongo
-from bson import ObjectId
+from bson import ObjectId, SON
 from pydantic import BaseModel
 from pymongo import MongoClient
 from pymongo.collection import Collection
@@ -39,6 +39,7 @@ def access_mongo_password():
 password = access_mongo_password()
 client = MongoClient(
     host=f"mongodb+srv://admin:{password}@cluster0.wgcf8.mongodb.net/workout?retryWrites=true&w=majority")
+# client = MongoClient()
 # test_client = MongoClient(database="test")
 
 db = client.workout
@@ -66,8 +67,8 @@ class Dao(Generic[T]):
         val = self.collection.find_one({"_id": ObjectId(_id)})
         return val if val is None else self.model(**val)
 
-    def list(self) -> List[BaseModel]:
-        return list(map(lambda data: self.model(**data), self.collection.find()))
+    def list(self, order_by: List[Tuple] = None) -> List[BaseModel]:
+        return list(map(lambda data: self.model(**data), self.collection.find(sort=order_by)))
 
     def find_one(self, *args, **kwargs):
         data = self.collection.find_one({'state': WorkoutSessionState.START}, sort=[('created_at', pymongo.DESCENDING)])
@@ -82,12 +83,13 @@ class Dao(Generic[T]):
 
 
 class WorkoutDao(Dao):
-    def list(self) -> List[Workout]:
+    def list(self, order_by: List[Tuple] = None) -> List[Workout]:
         query = self.collection.aggregate([
             {'$lookup': {'from': 'exercises',
                          'localField': 'training_sets.rounds.exercise_id',
                          'foreignField': '_id',
-                         'as': '_exercises'}}
+                         'as': '_exercises'}},
+            {'$sort': SON(order_by)}
         ])
         data = list(query)
         self._transform_list(data)
