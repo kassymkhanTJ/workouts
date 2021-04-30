@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import cast, Dict, Any, Generic, TypeVar, List
+from typing import cast, Dict, Any, Generic, TypeVar, List, Tuple
 
 import pymongo
 
@@ -15,8 +15,8 @@ class ModelService(Generic[T]):
     def __init__(self, dao):
         self.dao = dao
 
-    def list(self) -> List[T]:
-        return self.dao.list()
+    def list(self, order_by: List[Tuple] = None) -> List[T]:
+        return self.dao.list(order_by=order_by)
 
     def get(self, _id: str) -> T:
         return self.dao.get(_id)

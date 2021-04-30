@@ -1,5 +1,6 @@
 from typing import List
 
+import pymongo
 from pydantic import ValidationError
 
 from decorators.path_decorators import validate_bson_id, raise_not_found
@@ -10,7 +11,7 @@ from workout_sessions.services import workout_session_service
 
 @app.get("/workout_sessions", response_model=List[WorkoutSession], tags=["workout_sessions"])
 def workout_sessions_list():
-    return workout_session_service.list()
+    return workout_session_service.list(order_by=[('created_at', pymongo.DESCENDING)])
 
 
 @app.get("/workout_sessions/{_id}", response_model=WorkoutSession, tags=["workout_sessions"])
