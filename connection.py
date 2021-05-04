@@ -1,3 +1,4 @@
+import os
 from typing import Type, List, Union, Dict, Any, TypeVar, Generic, Tuple
 
 import pymongo
@@ -10,7 +11,7 @@ from workout_sessions.models import WorkoutSessionState
 from workouts.models import Workout, Exercise
 
 
-def access_mongo_password():
+def access_mongo_password_gcloud():
     """
     Access the payload for the given secret version if one exists. The version
     can be a version number as a string (e.g. "5") or an alias (e.g. "latest").
@@ -36,7 +37,8 @@ def access_mongo_password():
     return payload
 
 
-password = access_mongo_password()
+# password = access_mongo_password_gcloud()
+password = os.environ['MONGO_PWD']
 client = MongoClient(
     host=f"mongodb+srv://admin:{password}@cluster0.wgcf8.mongodb.net/workout?retryWrites=true&w=majority")
 # client = MongoClient()
