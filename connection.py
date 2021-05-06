@@ -38,10 +38,13 @@ def access_mongo_password_gcloud():
 
 
 # password = access_mongo_password_gcloud()
-password = os.environ['MONGO_PWD']
-client = MongoClient(
-    host=f"mongodb+srv://admin:{password}@cluster0.wgcf8.mongodb.net/workout?retryWrites=true&w=majority")
-# client = MongoClient()
+env = os.environ.get('ENV', 'dev')
+if env == 'prod':
+    password = os.environ.get('MONGO_PWD')
+    client = MongoClient(
+        host=f"mongodb+srv://admin:{password}@cluster0.wgcf8.mongodb.net/workout?retryWrites=true&w=majority")
+else:
+    client = MongoClient()
 # test_client = MongoClient(database="test")
 
 db = client.workout
